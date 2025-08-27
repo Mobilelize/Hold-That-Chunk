@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "hold_that_chunk_2",
+  "version": "${version}",
+  "name": "Hold That Chunk V2",
+  "description": "Delays client chunk unloading",
+  "authors": ["Mobilelize"],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/hold_that_chunk/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "net.mobilelize.hold_that_chunk.client.Hold_that_chunkClient"
+    ],
+    "main": [
+      "net.mobilelize.hold_that_chunk.Hold_that_chunk"
+    ],
+    "modmenu": [
+      "net.mobilelize.hold_that_chunk.client.config.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "hold_that_chunk.mixins.json",
+    {
+      "config": "hold_that_chunk.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  },
+  "suggests": {
+    "modmenu": "*",
+    "cloth-config": "*"
+  }
+}
