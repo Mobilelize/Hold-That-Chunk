@@ -21,7 +21,7 @@ public class ConfigManager {
     public static class ConfigData {
         public boolean respectServerDistance = false; //Uses Server Render distance.
         public boolean linkRenderDistance = true;
-        public boolean keepChunksLoaded = false;
+        public boolean holdThatChunkEnabled = true;
         public int holdDistance = 64;
     }
 

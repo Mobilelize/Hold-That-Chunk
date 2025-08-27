@@ -5,6 +5,7 @@ import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import net.mobilelize.hold_that_chunk.client.Hold_that_chunkClient;
 
 public class HoldThatChunkClothConfig {
 
@@ -15,6 +16,17 @@ public class HoldThatChunkClothConfig {
 
         ConfigCategory general = builder.getOrCreateCategory(Text.literal("General"));
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
+
+        general.addEntry(entryBuilder
+                .startBooleanToggle(Text.literal("Enable Hold That Chunk"), ConfigManager.configData.holdThatChunkEnabled)
+                .setDefaultValue(true)
+                .setSaveConsumer(val -> ConfigManager.configData.holdThatChunkEnabled = val)
+                .setTooltip(
+                        Text.literal("Toggles the Hold That Chunk system on or off."),
+                        Text.literal("Note: changes take effect when switching worlds or reconnecting.")
+                )
+                .build());
+
 
         general.addEntry(entryBuilder
                 .startBooleanToggle(Text.literal("Respect Server's Render Distance"), ConfigManager.configData.respectServerDistance)
@@ -31,17 +43,13 @@ public class HoldThatChunkClothConfig {
                 .build());
 
         general.addEntry(entryBuilder
-                .startBooleanToggle(Text.literal("Keep Chunks Loaded"), ConfigManager.configData.keepChunksLoaded)
-                .setDefaultValue(false)
-                .setSaveConsumer(val -> ConfigManager.configData.keepChunksLoaded = val)
-                .setTooltip(Text.literal("If \"Link to Render Distance\" is activated, sets if the chunks should be kept loaded outside that render distance."))
-                .build());
-
-        general.addEntry(entryBuilder
                 .startIntSlider(Text.literal("Hold Distance"), ConfigManager.configData.holdDistance, 2, 256)
                 .setDefaultValue(64)
                 .setMin(2).setMax(256)
                 .setSaveConsumer(val -> ConfigManager.configData.holdDistance = val)
+                .build());
+
+        general.addEntry(entryBuilder.startTextDescription(Text.literal("Server's Render Distance: " + Hold_that_chunkClient.chunkUnloader.getOriginalServerRenderDistance()))
                 .build());
 
         builder.setSavingRunnable(ConfigManager::saveConfig);

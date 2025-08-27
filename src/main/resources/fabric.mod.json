@@ -5,9 +5,9 @@
   "name": "Hold That Chunk V2",
   "description": "Delays client chunk unloading",
   "authors": ["Mobilelize"],
-  "contact": {},
+  "contact": {"sources": "https://github.com/Mobilelize/hold-that-chunk"},
   "license": "MIT",
-  "icon": "assets/hold_that_chunk/icon.png",
+  "icon": "assets/icon.png",
   "environment": "client",
   "entrypoints": {
     "client": [

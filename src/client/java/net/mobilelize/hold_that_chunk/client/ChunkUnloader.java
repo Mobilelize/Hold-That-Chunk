@@ -2,6 +2,7 @@ package net.mobilelize.hold_that_chunk.client;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.network.packet.s2c.play.ChunkLoadDistanceS2CPacket;
 import net.minecraft.network.packet.s2c.play.UnloadChunkS2CPacket;
 import net.minecraft.util.math.ChunkPos;
 import net.mobilelize.hold_that_chunk.client.config.ConfigManager;
@@ -21,6 +22,10 @@ public class ChunkUnloader {
 
     public void setOriginalServerRenderDistance(int originalServerRenderDistance) {
         this.originalServerRenderDistance = originalServerRenderDistance;
+    }
+
+    public int getOriginalServerRenderDistance() {
+        return originalServerRenderDistance;
     }
 
     /**
@@ -49,10 +54,11 @@ public class ChunkUnloader {
             UnloadChunkS2CPacket packet = entry.getValue();
 
             boolean isOutsideDistance = pos.getChebyshevDistance(playerPos) > getHoldDistance();
-            boolean respectServerDistance = ConfigManager.configData.respectServerDistance && pos.getChebyshevDistance(playerPos) > originalServerRenderDistance;
+            boolean respectServerDistance = ConfigManager.configData.respectServerDistance;
+            boolean modEnabled = ConfigManager.configData.holdThatChunkEnabled;
 
             // Use chessboard distance (same as vanilla chunk distance logic)
-            if (isOutsideDistance || respectServerDistance) {
+            if (!modEnabled || isOutsideDistance || respectServerDistance) {
                 processedUnloads.add(pos);
                 client.getNetworkHandler().onUnloadChunk(packet);
                 it.remove();
@@ -69,9 +75,9 @@ public class ChunkUnloader {
     }
 
     private int getHoldDistance() {
-        if (ConfigManager.configData.linkRenderDistance && !ConfigManager.configData.keepChunksLoaded) return MinecraftClient.getInstance().options.getViewDistance().getValue();
+        if (ConfigManager.configData.linkRenderDistance) return MinecraftClient.getInstance().options.getViewDistance().getValue();
 
-        return Math.max(ConfigManager.configData.holdDistance, MinecraftClient.getInstance().options.getViewDistance().getValue());
+        return ConfigManager.configData.holdDistance;
     }
 
     public void clear() {

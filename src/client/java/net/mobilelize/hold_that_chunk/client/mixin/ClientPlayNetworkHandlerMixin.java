@@ -10,6 +10,7 @@ import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.network.packet.s2c.play.UnloadChunkS2CPacket;
 import net.minecraft.util.math.ChunkPos;
 import net.mobilelize.hold_that_chunk.client.Hold_that_chunkClient;
+import net.mobilelize.hold_that_chunk.client.config.ConfigManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ClientPlayNetworkHandlerMixin {
     @Inject(method = "onUnloadChunk", at = @At("HEAD"), cancellable = true)
     private void holdThatChunk(UnloadChunkS2CPacket packet, CallbackInfo ci) {
-        if (!Hold_that_chunkClient.chunkUnloader.isBeingProcessedRemove(packet.pos())) {
+        if (!ConfigManager.configData.respectServerDistance && !Hold_that_chunkClient.chunkUnloader.isBeingProcessedRemove(packet.pos())) {
             Hold_that_chunkClient.chunkUnloader.onUnloadPacket(packet);
             ci.cancel();
         }
@@ -29,7 +30,8 @@ public class ClientPlayNetworkHandlerMixin {
     @Redirect(method = "onChunkLoadDistance", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/s2c/play/ChunkLoadDistanceS2CPacket;getDistance()I"))
     private int setServerDistance(ChunkLoadDistanceS2CPacket instance) {
         Hold_that_chunkClient.chunkUnloader.setOriginalServerRenderDistance(instance.getDistance());
-        return 256;
+        if (ConfigManager.configData.holdThatChunkEnabled) return 256;
+        return instance.getDistance();
     }
 
     @Inject(method = "startWorldLoading", at = @At("HEAD"))
