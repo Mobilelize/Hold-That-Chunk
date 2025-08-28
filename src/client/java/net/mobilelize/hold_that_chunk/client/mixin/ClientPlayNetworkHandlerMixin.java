@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ClientPlayNetworkHandlerMixin {
     @Inject(method = "onUnloadChunk", at = @At("HEAD"), cancellable = true)
     private void holdThatChunk(UnloadChunkS2CPacket packet, CallbackInfo ci) {
-        if (!ConfigManager.configData.respectServerDistance && !Hold_that_chunkClient.chunkUnloader.isBeingProcessedRemove(packet.pos())) {
+        if (ConfigManager.configData.holdThatChunkEnabled && !ConfigManager.configData.respectServerDistance && !Hold_that_chunkClient.chunkUnloader.isBeingProcessedRemove(packet.pos())) {
             Hold_that_chunkClient.chunkUnloader.onUnloadPacket(packet);
             ci.cancel();
         }
