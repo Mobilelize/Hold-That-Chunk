@@ -32,8 +32,8 @@ public class HoldThatChunkClothConfig {
                 .setDefaultValue(true)
                 .setSaveConsumer(val -> ConfigManager.configData.ignoreServerDistance = val)
                 .setTooltip(
-                        Text.literal("True: Render Distance can exceed the server's render distance (fog won't appear, cause it's 256 chunks out)."),
-                        Text.literal("False: max render distance is capped to the server's value (fog appears)."),
+                        Text.literal("True: Render Distance can exceed the server's render distance (fog too)."),
+                        Text.literal("False: max render distance is capped to the server's value."),
                         Text.literal("Note: changes take effect when switching worlds or reconnecting.")
                 )
                 .build());
