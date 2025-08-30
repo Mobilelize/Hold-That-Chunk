@@ -39,6 +39,16 @@ Instead of dropping terrain the instant the server says “unload,” this mod k
 
 ---
 
+## 🧩 In-game Configuration (Mod Menu + Cloth Config)
+
+If you have **Mod Menu** and **Cloth Config** installed, this mod exposes a full settings screen:
+- Open **Mods** → **Hold That Chunk V2** → **Configure** (Mod Menu button).
+- All options (enable toggle, ignore/cap server distance, link to render distance, hold distance, check cadence) can be adjusted in-game.
+
+> Don’t have them? Install **Mod Menu** and **Cloth Config** to access the in-game UI. Otherwise, you can edit the JSON config file manually.
+
+---
+
 ## 🔎 Notes & limitations
 
 - Client-side only; does **not** increase server view distance or generate new data.  
