@@ -49,7 +49,8 @@ Instead of dropping terrain the instant the server says “unload,” this mod k
 
 ---
 
-## 🙏 Credits & links
+## 🙏 Credits
 
-- Idea & original project: **Hold That Chunk** → https://modrinth.com/mod/hold-that-chunk  
-- This mod is a **ground-up re-implementation** for 1.21+ with extra configuration.
+- Original mod: **Hold That Chunk** — by **dlee13** (Modrinth) / **The_TermiGator** (CurseForge)  
+  Modrinth: https://modrinth.com/mod/hold-that-chunk  
+  CurseForge: https://www.curseforge.com/minecraft/mc-mods/hold-that-chunk
