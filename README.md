@@ -44,7 +44,7 @@ Instead of dropping terrain the instant the server says “unload,” this mod k
 - Client-side only; does **not** increase server view distance or generate new data.  
 - Holding more chunks can use additional memory—tune **Hold Distance** to your preference.  
 - Options that change the client/server distance relationship (ignore/cap) typically apply **after a world switch or reconnect** because the server distance is negotiated on join.
-- The mod does not work in single player (same limitation as the original).  
+- The mod does not work in Singleplayer (same limitation as the original).  
 - On pure vanilla servers the client may not receive the unload/forget-chunk packets this mod relies on, so the mod may appear inactive.
 
 ---
