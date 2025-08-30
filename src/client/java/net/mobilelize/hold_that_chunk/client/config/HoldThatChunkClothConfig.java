@@ -27,6 +27,17 @@ public class HoldThatChunkClothConfig {
                 )
                 .build());
 
+        general.addEntry(entryBuilder
+                .startBooleanToggle(Text.literal("Ignore Server's Render Distance"), ConfigManager.configData.ignoreServerDistance)
+                .setDefaultValue(true)
+                .setSaveConsumer(val -> ConfigManager.configData.ignoreServerDistance = val)
+                .setTooltip(
+                        Text.literal("True: Render Distance can exceed the server's render distance (fog won't appear, cause it's 256 chunks out)."),
+                        Text.literal("False: max render distance is capped to the server's value (fog appears)."),
+                        Text.literal("Note: changes take effect when switching worlds or reconnecting.")
+                )
+                .build());
+
 
         general.addEntry(entryBuilder
                 .startBooleanToggle(Text.literal("Respect Server's Render Distance"), ConfigManager.configData.respectServerDistance)
@@ -39,7 +50,7 @@ public class HoldThatChunkClothConfig {
                 .startBooleanToggle(Text.literal("Link to Render Distance"), ConfigManager.configData.linkRenderDistance)
                 .setDefaultValue(false)
                 .setSaveConsumer(val -> ConfigManager.configData.linkRenderDistance = val)
-                .setTooltip(Text.literal("Sets if your hold distance should be linked to your render distance."))
+                .setTooltip(Text.literal("Sets hold distance to your render distance."))
                 .build());
 
         general.addEntry(entryBuilder

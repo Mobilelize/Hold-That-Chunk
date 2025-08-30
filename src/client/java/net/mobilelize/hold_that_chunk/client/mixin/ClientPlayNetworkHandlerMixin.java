@@ -30,7 +30,7 @@ public class ClientPlayNetworkHandlerMixin {
     @Redirect(method = "onChunkLoadDistance", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/s2c/play/ChunkLoadDistanceS2CPacket;getDistance()I"))
     private int setServerDistance(ChunkLoadDistanceS2CPacket instance) {
         Hold_that_chunkClient.chunkUnloader.setOriginalServerRenderDistance(instance.getDistance());
-        if (ConfigManager.configData.holdThatChunkEnabled) return 256;
+        if (ConfigManager.configData.holdThatChunkEnabled && ConfigManager.configData.ignoreServerDistance) return 256;
         return instance.getDistance();
     }
 

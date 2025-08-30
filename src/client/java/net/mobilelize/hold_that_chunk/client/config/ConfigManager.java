@@ -22,6 +22,7 @@ public class ConfigManager {
         public boolean respectServerDistance = false; //Uses Server Render distance.
         public boolean linkRenderDistance = false;
         public boolean holdThatChunkEnabled = true;
+        public boolean ignoreServerDistance = true;
         public int holdDistance = 64;
     }
 
