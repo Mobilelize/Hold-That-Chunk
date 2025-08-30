@@ -2,7 +2,6 @@ package net.mobilelize.hold_that_chunk.client;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.packet.s2c.play.ChunkLoadDistanceS2CPacket;
 import net.minecraft.network.packet.s2c.play.UnloadChunkS2CPacket;
 import net.minecraft.util.math.ChunkPos;
 import net.mobilelize.hold_that_chunk.client.config.ConfigManager;
@@ -12,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ChunkUnloader {
 
-    private final Map<ChunkPos, UnloadChunkS2CPacket> pendingUnloads = new ConcurrentHashMap<>();
+    private final Set<ChunkPos> pendingUnloads = ConcurrentHashMap.newKeySet();
     private final Set<ChunkPos> processedUnloads = new HashSet<>();
     private int originalServerRenderDistance = 128;
 
@@ -33,7 +32,7 @@ public class ChunkUnloader {
      * Instead of unloading immediately, we save the chunk+packet.
      */
     public void onUnloadPacket(UnloadChunkS2CPacket packet) {
-        MinecraftClient.getInstance().execute(() -> pendingUnloads.put(packet.pos(), packet));
+        MinecraftClient.getInstance().execute(() -> pendingUnloads.add(packet.pos()));
     }
 
     /**
@@ -47,11 +46,9 @@ public class ChunkUnloader {
 
         ChunkPos playerPos = client.player.getChunkPos();
 
-        Iterator<Map.Entry<ChunkPos, UnloadChunkS2CPacket>> it = pendingUnloads.entrySet().iterator();
+        Iterator<ChunkPos> it = pendingUnloads.iterator();
         while (it.hasNext()) {
-            Map.Entry<ChunkPos, UnloadChunkS2CPacket> entry = it.next();
-            ChunkPos pos = entry.getKey();
-            UnloadChunkS2CPacket packet = entry.getValue();
+            ChunkPos pos = it.next();
 
             boolean isOutsideDistance = pos.getChebyshevDistance(playerPos) > getHoldDistance();
             boolean respectServerDistance = ConfigManager.configData.respectServerDistance;
@@ -60,7 +57,7 @@ public class ChunkUnloader {
             // Use chessboard distance (same as vanilla chunk distance logic)
             if (!modEnabled || isOutsideDistance || respectServerDistance) {
                 processedUnloads.add(pos);
-                client.getNetworkHandler().onUnloadChunk(packet);
+                client.getNetworkHandler().onUnloadChunk(new UnloadChunkS2CPacket(pos));
                 it.remove();
             }
         }
