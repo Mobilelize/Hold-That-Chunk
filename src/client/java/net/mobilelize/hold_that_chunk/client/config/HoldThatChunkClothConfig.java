@@ -37,7 +37,7 @@ public class HoldThatChunkClothConfig {
 
         general.addEntry(entryBuilder
                 .startBooleanToggle(Text.literal("Link to Render Distance"), ConfigManager.configData.linkRenderDistance)
-                .setDefaultValue(true)
+                .setDefaultValue(false)
                 .setSaveConsumer(val -> ConfigManager.configData.linkRenderDistance = val)
                 .setTooltip(Text.literal("Sets if your hold distance should be linked to your render distance."))
                 .build());
