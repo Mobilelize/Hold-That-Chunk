@@ -27,7 +27,7 @@ public class ConfigManager {
 
         public boolean cancelEmptyChunks = false;
         public int restoreEmptyChunksDistance = 2;
-        public int ignoreEmptyChunksDistance = 6;
+        public int ignoreEmptyChunksDistance = 5;
     }
 
     public static void loadConfig() {

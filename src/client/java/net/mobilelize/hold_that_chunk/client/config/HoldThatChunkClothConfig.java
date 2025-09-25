@@ -71,7 +71,7 @@ public class HoldThatChunkClothConfig {
 
         general.addEntry(entryBuilder
                 .startIntSlider(Text.literal("Ignore Empty Chunks Distance"), ConfigManager.configData.ignoreEmptyChunksDistance, 2, 256)
-                .setDefaultValue(6)
+                .setDefaultValue(5)
                 .setMin(2).setMax(256)
                 .setSaveConsumer(val -> ConfigManager.configData.ignoreEmptyChunksDistance = val)
                 .setTooltip(Text.literal("Distance needed before ignoring empty chunks."))
