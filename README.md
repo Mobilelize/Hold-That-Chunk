@@ -39,12 +39,22 @@ Instead of dropping terrain the instant the server says “unload,” this mod k
 
 ---
 
+## 🧩 In-game Configuration (Mod Menu + Cloth Config)
+
+If you have **Mod Menu** and **Cloth Config** installed, this mod exposes a full settings screen:
+- Open **Mods** → **Hold That Chunk V2** → **Configure** (Mod Menu button).
+- All options (enable toggle, ignore/cap server distance, link to render distance, hold distance) can be adjusted in-game.
+
+> Don’t have them? Install **Mod Menu** and **Cloth Config** to access the in-game UI. Otherwise, you can edit the JSON config file manually.
+
+---
+
 ## 🔎 Notes & limitations
 
 - Client-side only; does **not** increase server view distance or generate new data.  
 - Holding more chunks can use additional memory—tune **Hold Distance** to your preference.  
 - Options that change the client/server distance relationship (ignore/cap) typically apply **after a world switch or reconnect** because the server distance is negotiated on join.
-- The mod does not work in single player (same limitation as the original).  
+- The mod does not work in Singleplayer (same limitation as the original).  
 - On pure vanilla servers the client may not receive the unload/forget-chunk packets this mod relies on, so the mod may appear inactive.
 
 ---
