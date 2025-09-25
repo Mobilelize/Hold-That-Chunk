@@ -49,10 +49,6 @@ public class ClientPlayNetworkHandlerMixin {
         ChunkPos pos = new ChunkPos(packet.getChunkX(), packet.getChunkZ());
         Hold_that_chunkClient.chunkUnloader.removePending(pos);
 
-        if (pos.x == 6 && pos.z == 15) {
-            Hold_that_chunkClient.logger.info("this chunk size {}", packet.getChunkData().getSectionsDataBuf().array().length);
-        }
-
         if (isPacketEffectivelyEmpty(packet)
                 && Hold_that_chunkClient.chunkUnloader.shouldCancelEmptyChunk(pos)
                 && !Hold_that_chunkClient.chunkUnloader.isEmptyBeingProcessedRemove(new ChunkPos(packet.getChunkX(), packet.getChunkZ()))) {
