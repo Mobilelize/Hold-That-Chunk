@@ -1,6 +1,7 @@
 package net.mobilelize.hold_that_chunk.client;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.mobilelize.hold_that_chunk.client.config.ConfigManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,7 @@ public class Hold_that_chunkClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        ConfigManager.loadConfig();
         chunkUnloader = new ChunkUnloader();
-
     }
 }

@@ -60,6 +60,31 @@ public class HoldThatChunkClothConfig {
                 .setSaveConsumer(val -> ConfigManager.configData.holdDistance = val)
                 .build());
 
+        general.addEntry(entryBuilder
+                .startBooleanToggle(Text.literal("Ignore Empty Chunks"), ConfigManager.configData.cancelEmptyChunks)
+                .setDefaultValue(false)
+                .setSaveConsumer(val -> ConfigManager.configData.cancelEmptyChunks = val)
+                .setTooltip(
+                        Text.literal("Sets if the client should ignore empty chunks")
+                )
+                .build());
+
+        general.addEntry(entryBuilder
+                .startIntSlider(Text.literal("Ignore Empty Chunks Distance"), ConfigManager.configData.ignoreEmptyChunksDistance, 2, 256)
+                .setDefaultValue(6)
+                .setMin(2).setMax(256)
+                .setSaveConsumer(val -> ConfigManager.configData.ignoreEmptyChunksDistance = val)
+                .setTooltip(Text.literal("Distance needed before ignoring empty chunks."))
+                .build());
+
+        general.addEntry(entryBuilder
+                .startIntSlider(Text.literal("Restore Empty Chunks Distance"), ConfigManager.configData.restoreEmptyChunksDistance, 2, 256)
+                .setDefaultValue(2)
+                .setMin(2).setMax(256)
+                .setSaveConsumer(val -> ConfigManager.configData.restoreEmptyChunksDistance = val)
+                .setTooltip(Text.literal("Distance needed before restoring empty chunks."))
+                .build());
+
         general.addEntry(entryBuilder.startTextDescription(Text.literal("Server's Render Distance: " + Hold_that_chunkClient.chunkUnloader.getOriginalServerRenderDistance()))
                 .build());
 

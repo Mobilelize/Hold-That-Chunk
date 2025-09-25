@@ -24,6 +24,10 @@ public class ConfigManager {
         public boolean holdThatChunkEnabled = true;
         public boolean ignoreServerDistance = true;
         public int holdDistance = 64;
+
+        public boolean cancelEmptyChunks = false;
+        public int restoreEmptyChunksDistance = 2;
+        public int ignoreEmptyChunksDistance = 6;
     }
 
     public static void loadConfig() {
