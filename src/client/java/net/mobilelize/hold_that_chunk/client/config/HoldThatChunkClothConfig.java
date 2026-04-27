@@ -3,8 +3,8 @@ package net.mobilelize.hold_that_chunk.client.config;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.mobilelize.hold_that_chunk.client.Hold_that_chunkClient;
 
 public class HoldThatChunkClothConfig {
@@ -12,80 +12,80 @@ public class HoldThatChunkClothConfig {
     public static Screen create(Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
-                .setTitle(Text.literal("Hold That Chunk V2"));
+                .setTitle(Component.literal("Hold That Chunk V2"));
 
-        ConfigCategory general = builder.getOrCreateCategory(Text.literal("General"));
+        ConfigCategory general = builder.getOrCreateCategory(Component.literal("General"));
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
         general.addEntry(entryBuilder
-                .startBooleanToggle(Text.literal("Enable Hold That Chunk"), ConfigManager.configData.holdThatChunkEnabled)
+                .startBooleanToggle(Component.literal("Enable Hold That Chunk"), ConfigManager.configData.holdThatChunkEnabled)
                 .setDefaultValue(true)
                 .setSaveConsumer(val -> ConfigManager.configData.holdThatChunkEnabled = val)
                 .setTooltip(
-                        Text.literal("Toggles the Hold That Chunk system on or off."),
-                        Text.literal("Note: changes take effect when switching worlds or reconnecting.")
+                        Component.literal("Toggles the Hold That Chunk system on or off."),
+                        Component.literal("Note: changes take effect when switching worlds or reconnecting.")
                 )
                 .build());
 
         general.addEntry(entryBuilder
-                .startBooleanToggle(Text.literal("Ignore Server's Render Distance"), ConfigManager.configData.ignoreServerDistance)
+                .startBooleanToggle(Component.literal("Ignore Server's Render Distance"), ConfigManager.configData.ignoreServerDistance)
                 .setDefaultValue(true)
                 .setSaveConsumer(val -> ConfigManager.configData.ignoreServerDistance = val)
                 .setTooltip(
-                        Text.literal("True: Render Distance can exceed the server's render distance (fog too)."),
-                        Text.literal("False: max render distance is capped to the server's value."),
-                        Text.literal("Note: changes take effect when switching worlds or reconnecting.")
+                        Component.literal("True: Render Distance can exceed the server's render distance (fog too)."),
+                        Component.literal("False: max render distance is capped to the server's value."),
+                        Component.literal("Note: changes take effect when switching worlds or reconnecting.")
                 )
                 .build());
 
 
         general.addEntry(entryBuilder
-                .startBooleanToggle(Text.literal("Respect Server's Render Distance"), ConfigManager.configData.respectServerDistance)
+                .startBooleanToggle(Component.literal("Respect Server's Render Distance"), ConfigManager.configData.respectServerDistance)
                 .setDefaultValue(false)
                 .setSaveConsumer(val -> ConfigManager.configData.respectServerDistance = val)
-                .setTooltip(Text.literal("Sets hold distance to the server's render distance."))
+                .setTooltip(Component.literal("Sets hold distance to the server's render distance."))
                 .build());
 
         general.addEntry(entryBuilder
-                .startBooleanToggle(Text.literal("Link to Render Distance"), ConfigManager.configData.linkRenderDistance)
+                .startBooleanToggle(Component.literal("Link to Render Distance"), ConfigManager.configData.linkRenderDistance)
                 .setDefaultValue(false)
                 .setSaveConsumer(val -> ConfigManager.configData.linkRenderDistance = val)
-                .setTooltip(Text.literal("Sets hold distance to your render distance."))
+                .setTooltip(Component.literal("Sets hold distance to your render distance."))
                 .build());
 
         general.addEntry(entryBuilder
-                .startIntSlider(Text.literal("Hold Distance"), ConfigManager.configData.holdDistance, 2, 256)
+                .startIntSlider(Component.literal("Hold Distance"), ConfigManager.configData.holdDistance, 2, 256)
                 .setDefaultValue(64)
                 .setMin(2).setMax(256)
                 .setSaveConsumer(val -> ConfigManager.configData.holdDistance = val)
                 .build());
 
         general.addEntry(entryBuilder
-                .startBooleanToggle(Text.literal("Ignore Empty Chunks"), ConfigManager.configData.cancelEmptyChunks)
+                .startBooleanToggle(Component.literal("Ignore Empty Chunks"), ConfigManager.configData.cancelEmptyChunks)
                 .setDefaultValue(false)
                 .setSaveConsumer(val -> ConfigManager.configData.cancelEmptyChunks = val)
                 .setTooltip(
-                        Text.literal("Sets if the client should ignore empty chunks")
+                        Component.literal("Sets if the client should ignore empty chunks")
                 )
                 .build());
 
         general.addEntry(entryBuilder
-                .startIntSlider(Text.literal("Ignore Empty Chunks Distance"), ConfigManager.configData.ignoreEmptyChunksDistance, 2, 256)
+                .startIntSlider(Component.literal("Ignore Empty Chunks Distance"), ConfigManager.configData.ignoreEmptyChunksDistance, 2, 256)
                 .setDefaultValue(5)
                 .setMin(2).setMax(256)
                 .setSaveConsumer(val -> ConfigManager.configData.ignoreEmptyChunksDistance = val)
-                .setTooltip(Text.literal("Distance needed before ignoring empty chunks."))
+                .setTooltip(Component.literal("Distance needed before ignoring empty chunks."))
                 .build());
 
         general.addEntry(entryBuilder
-                .startIntSlider(Text.literal("Restore Empty Chunks Distance"), ConfigManager.configData.restoreEmptyChunksDistance, 2, 256)
+                .startIntSlider(Component.literal("Restore Empty Chunks Distance"), ConfigManager.configData.restoreEmptyChunksDistance, 2, 256)
                 .setDefaultValue(2)
                 .setMin(2).setMax(256)
                 .setSaveConsumer(val -> ConfigManager.configData.restoreEmptyChunksDistance = val)
-                .setTooltip(Text.literal("Distance needed before restoring empty chunks."))
+                .setTooltip(Component.literal("Distance needed before restoring empty chunks."))
                 .build());
 
-        general.addEntry(entryBuilder.startTextDescription(Text.literal("Server's Render Distance: " + Hold_that_chunkClient.chunkUnloader.getOriginalServerRenderDistance()))
+        general.addEntry(entryBuilder.startTextDescription(Component.literal("Server's Render Distance: " + Hold_that_chunkClient.chunkUnloader.getOriginalServerRenderDistance()))
                 .build());
 
         builder.setSavingRunnable(ConfigManager::saveConfig);

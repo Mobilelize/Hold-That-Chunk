@@ -1,10 +1,10 @@
 package net.mobilelize.hold_that_chunk.client;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
-import net.minecraft.network.packet.s2c.play.UnloadChunkS2CPacket;
-import net.minecraft.util.math.ChunkPos;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.protocol.game.ClientboundForgetLevelChunkPacket;
+import net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket;
+import net.minecraft.world.level.ChunkPos;
 import net.mobilelize.hold_that_chunk.client.config.ConfigManager;
 
 import java.util.Iterator;
@@ -17,7 +17,7 @@ public class ChunkUnloader {
     private final Set<ChunkPos> pendingUnloads = ConcurrentHashMap.newKeySet();
     private final Set<ChunkPos> processedUnloads = ConcurrentHashMap.newKeySet();
 
-    private final Map<ChunkPos, ChunkDataS2CPacket> clearedChunks = new ConcurrentHashMap<>();
+    private final Map<ChunkPos, ClientboundLevelChunkWithLightPacket> clearedChunks = new ConcurrentHashMap<>();
     private final Set<ChunkPos> processedClears = ConcurrentHashMap.newKeySet();
 
     private int originalServerRenderDistance = 128;
@@ -35,12 +35,12 @@ public class ChunkUnloader {
         return originalServerRenderDistance;
     }
 
-    public void markCleared(ChunkPos pos, ChunkDataS2CPacket packet) { MinecraftClient.getInstance().execute(() -> clearedChunks.put(pos, packet)); }
+    public void markCleared(ChunkPos pos, ClientboundLevelChunkWithLightPacket packet) { Minecraft.getInstance().execute(() -> clearedChunks.put(pos, packet)); }
     public void unmarkCleared(ChunkPos pos) { clearedChunks.remove(pos); }
 
     public boolean shouldCancelEmptyChunk(ChunkPos pos) {
-        var client = MinecraftClient.getInstance();
-        if (client.world == null || client.player == null) return false;
+        var client = Minecraft.getInstance();
+        if (client.level == null || client.player == null) return false;
         if (!ConfigManager.configData.cancelEmptyChunks) return false;
         if (!ConfigManager.configData.holdThatChunkEnabled) return false;
         if (ConfigManager.configData.respectServerDistance) return false;
@@ -53,59 +53,50 @@ public class ChunkUnloader {
     }
 
     public boolean closeToEmptyChunk(ChunkPos pos) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.world == null || client.player == null) return true;
-        int dist = pos.getChebyshevDistance(client.player.getChunkPos());
+        Minecraft client = Minecraft.getInstance();
+        if (client.level == null || client.player == null) return true;
+        int dist = pos.getChessboardDistance(client.player.chunkPosition());
         int prox = Math.max(2, ConfigManager.configData.restoreEmptyChunksDistance);
         return dist <= prox;
     }
 
     public boolean farEnoughFromEmptyChunk(ChunkPos pos) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.world == null || client.player == null) return true;
-        int dist = pos.getChebyshevDistance(client.player.getChunkPos());
+        Minecraft client = Minecraft.getInstance();
+        if (client.level == null || client.player == null) return true;
+        int dist = pos.getChessboardDistance(client.player.chunkPosition());
         int prox = Math.min(256, ConfigManager.configData.ignoreEmptyChunksDistance);
         return dist >= prox;
     }
 
     private boolean isChunkLoaded(ChunkPos pos) {
-        var client = MinecraftClient.getInstance();
-        assert client.world != null;
-        var cm = client.world.getChunkManager();
-        return cm != null && cm.isChunkLoaded(pos.x, pos.z);
+        var client = Minecraft.getInstance();
+        assert client.level != null;
+        var cm = client.level.getChunkSource();
+        return cm.hasChunk(pos.x(), pos.z());
     }
 
-    /**
-     * Called when the server sends an unload packet.
-     * Instead of unloading immediately, we save the chunk+packet.
-     */
-    public void onUnloadPacket(UnloadChunkS2CPacket packet) {
-        MinecraftClient.getInstance().execute(() -> pendingUnloads.add(packet.pos()));
+    public void onUnloadPacket(ClientboundForgetLevelChunkPacket packet) {
+        Minecraft.getInstance().execute(() -> pendingUnloads.add(packet.pos()));
     }
 
-    /**
-     * Called periodically (e.g. each tick).
-     * Goes through saved chunks and unloads any that are too far away.
-     */
     public void processUnloads() {
         if (pendingUnloads.isEmpty()) return;
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.getNetworkHandler() == null || client.player == null) return;
+        Minecraft client = Minecraft.getInstance();
+        if (client.getConnection() == null || client.player == null) return;
 
-        ChunkPos playerPos = client.player.getChunkPos();
+        ChunkPos playerPos = client.player.chunkPosition();
 
         Iterator<ChunkPos> it = pendingUnloads.iterator();
         while (it.hasNext()) {
             ChunkPos pos = it.next();
 
-            boolean isOutsideDistance = pos.getChebyshevDistance(playerPos) > getHoldDistance();
+            boolean isOutsideDistance = pos.getChessboardDistance(playerPos) > getHoldDistance();
             boolean respectServerDistance = ConfigManager.configData.respectServerDistance;
             boolean modEnabled = ConfigManager.configData.holdThatChunkEnabled;
 
-            // Use chessboard distance (same as vanilla chunk distance logic)
             if (!modEnabled || isOutsideDistance || respectServerDistance) {
                 processedUnloads.add(pos);
-                client.getNetworkHandler().onUnloadChunk(new UnloadChunkS2CPacket(pos));
+                client.getConnection().handleForgetLevelChunk(new ClientboundForgetLevelChunkPacket(pos));
                 it.remove();
             }
         }
@@ -113,31 +104,31 @@ public class ChunkUnloader {
 
     public void processEmptyLoads() {
         if (clearedChunks.isEmpty()) return;
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.getNetworkHandler() == null || client.world == null || client.player == null) return;
-        Iterator<Map.Entry<ChunkPos, ChunkDataS2CPacket>> it = clearedChunks.entrySet().iterator();
+        Minecraft client = Minecraft.getInstance();
+        if (client.getConnection() == null || client.level == null || client.player == null) return;
+        Iterator<Map.Entry<ChunkPos, ClientboundLevelChunkWithLightPacket>> it = clearedChunks.entrySet().iterator();
 
         while (it.hasNext()) {
-            Map.Entry<ChunkPos, ChunkDataS2CPacket> empty = it.next();
+            Map.Entry<ChunkPos, ClientboundLevelChunkWithLightPacket> empty = it.next();
 
             boolean emptyChunks = ConfigManager.configData.cancelEmptyChunks;
             boolean modEnabled = ConfigManager.configData.holdThatChunkEnabled;
             if (!modEnabled || !emptyChunks || closeToEmptyChunk(empty.getKey())) {
                 processedClears.add(empty.getKey());
-                client.getNetworkHandler().onChunkData(empty.getValue());
+                client.getConnection().handleLevelChunkWithLight(empty.getValue());
                 it.remove();
             }
         }
     }
 
     public void loadEmpty(ChunkPos pos) {
-        MinecraftClient client = MinecraftClient.getInstance();
+        Minecraft client = Minecraft.getInstance();
         client.execute(() -> {
-            if (client.getNetworkHandler() == null || client.world == null || client.player == null) return;
+            if (client.getConnection() == null || client.level == null || client.player == null) return;
             if (clearedChunks.containsKey(pos)) {
-                ChunkDataS2CPacket remove = clearedChunks.remove(pos);
+                ClientboundLevelChunkWithLightPacket remove = clearedChunks.remove(pos);
                 processedClears.add(pos);
-                client.getNetworkHandler().onChunkData(remove);
+                client.getConnection().handleLevelChunkWithLight(remove);
             }
         });
     }
@@ -159,7 +150,7 @@ public class ChunkUnloader {
     }
 
     private int getHoldDistance() {
-        if (ConfigManager.configData.linkRenderDistance) return MinecraftClient.getInstance().options.getViewDistance().getValue();
+        if (ConfigManager.configData.linkRenderDistance) return Minecraft.getInstance().options.renderDistance().get();
 
         return ConfigManager.configData.holdDistance;
     }
@@ -177,4 +168,3 @@ public class ChunkUnloader {
     }
 
 }
-

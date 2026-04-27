@@ -2,7 +2,7 @@ package net.mobilelize.hold_that_chunk.client.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.mobilelize.hold_that_chunk.client.Hold_that_chunkClient;
 
 import java.io.File;
@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 public class ConfigManager {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final File CONFIG_DIR = new File(MinecraftClient.getInstance().runDirectory, "config/HoldThatChunk_V2");
+    private static final File CONFIG_DIR = new File(Minecraft.getInstance().gameDirectory, "config/HoldThatChunk_V2");
     private static final File CONFIG_FILE = new File(CONFIG_DIR, "hold_that_chunk.json");
 
     public static ConfigData configData = new ConfigData();
