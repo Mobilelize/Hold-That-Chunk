@@ -1,6 +1,6 @@
 package net.mobilelize.hold_that_chunk.client.mixin;
 
-import net.minecraft.client.gui.screen.DownloadingTerrainScreen;
+import net.minecraft.client.gui.screen.world.LevelLoadingScreen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
@@ -35,7 +35,7 @@ public class ClientPlayNetworkHandlerMixin {
     }
 
     @Inject(method = "startWorldLoading", at = @At("HEAD"))
-    public void loadingWorld(ClientPlayerEntity player, ClientWorld world, DownloadingTerrainScreen.WorldEntryReason worldEntryReason, CallbackInfo ci) {
+    public void loadingWorld(ClientPlayerEntity player, ClientWorld world, LevelLoadingScreen.WorldEntryReason reason, CallbackInfo ci) {
         Hold_that_chunkClient.chunkUnloader.clear();
     }
 
